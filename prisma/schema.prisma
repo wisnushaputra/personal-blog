@@ -1,135 +1,148 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-generator client {
-  provider = "prisma-client-js"
-}
+// Wisnu Blog — Prisma Schema
+// Source of truth: DATABASE.md §5
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  password  String    // bcrypt hash
-  name      String
-  role      String    @default("admin") // admin, author
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+generator client {
+  provider = "prisma-client-js"
+}
 
-  posts     Post[]
-  media     Media[]
+// ─── Enums ───────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  AUTHOR
+}
+
+enum PostStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+}
+
+enum CommentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ─── Models ──────────────────────────────────────────────
+
+model User {
+  id        BigInt   @id @default(autoincrement())
+  name      String   @db.VarChar(100)
+  email     String   @unique @db.VarChar(150)
+  password  String   @db.VarChar(255)
+  avatar    String?  @db.VarChar(255)
+  role      Role     @default(AUTHOR)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  posts         Post[]
+  uploadedMedia Media[]
 
   @@map("users")
 }
 
-model Post {
-  id          Int       @id @default(autoincrement())
-  slug        String    @unique
-  title       String
-  content     String    @db.Text
-  excerpt     String?
-  status      String    @default("draft") // draft, published, scheduled
-  publishedAt DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  views       Int       @default(0)
-
-  authorId    Int
-  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  categoryId  Int
-  category    Category  @relation(fields: [categoryId], references: [id], onDelete: SetNull) // Will be nullable
-
-  tags        PostTag[]
-  comments    Comment[]
-
-  @@index([authorId])
-  @@index([categoryId])
-  @@index([publishedAt])
-  @@index([status])
-  @@map("posts")
-}
-
 model Category {
-  id        Int       @id @default(autoincrement())
-  slug      String    @unique
-  name      String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id          BigInt  @id @default(autoincrement())
+  name        String  @db.VarChar(100)
+  slug        String  @unique @db.VarChar(100)
+  description String? @db.VarChar(300)
 
-  posts     Post[]
+  posts Post[]
 
   @@map("categories")
 }
 
 model Tag {
-  id        Int       @id @default(autoincrement())
-  slug      String    @unique
-  name      String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id   BigInt @id @default(autoincrement())
+  name String @db.VarChar(100)
+  slug String @unique @db.VarChar(100)
 
-  posts     PostTag[]
+  posts PostTag[]
 
   @@map("tags")
 }
 
+model Post {
+  id          BigInt     @id @default(autoincrement())
+  title       String     @db.VarChar(255)
+  slug        String     @unique @db.VarChar(255)
+  content     String
+  excerpt     String?    @db.VarChar(300)
+  thumbnail   String?    @db.VarChar(255)
+  status      PostStatus @default(DRAFT)
+  views       Int        @default(0)
+  authorId    BigInt     @map("author_id")
+  categoryId  BigInt?    @map("category_id")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  publishedAt DateTime?  @map("published_at")
+
+  author   User      @relation(fields: [authorId], references: [id], onDelete: Restrict)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags     PostTag[]
+  comments Comment[]
+
+  @@index([status, publishedAt])
+  @@index([authorId])
+  @@index([categoryId])
+  @@map("posts")
+}
+
 model PostTag {
-  id     Int @id @default(autoincrement())
-  postId Int
-  tagId  Int
+  postId BigInt @map("post_id")
+  tagId  BigInt @map("tag_id")
 
-  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
-  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
-  @@unique([postId, tagId])
+  @@id([postId, tagId])
+  @@index([tagId])
   @@map("post_tags")
 }
 
 model Comment {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String
-  content   String    @db.Text
-  status    String    @default("pending") // pending, approved, rejected
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id        BigInt        @id @default(autoincrement())
+  postId    BigInt        @map("post_id")
+  parentId  BigInt?       @map("parent_id")
+  name      String        @db.VarChar(100)
+  email     String        @db.VarChar(150)
+  content   String
+  status    CommentStatus @default(PENDING)
+  createdAt DateTime      @default(now()) @map("created_at")
 
-  postId    Int
-  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
-  parentId  Int?
-  parent    Comment?  @relation("CommentReply", fields: [parentId], references: [id], onDelete: SetNull)
-  replies   Comment[] @relation("CommentReply")
+  post    Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Comment[] @relation("CommentReplies")
 
   @@index([postId])
+  @@index([parentId])
   @@index([status])
   @@map("comments")
 }
 
-model Media {
-  id        Int       @id @default(autoincrement())
-  name      String
-  url       String
-  type      String    // image, video, document
-  size      Int       // in bytes
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+model Subscriber {
+  id        BigInt   @id @default(autoincrement())
+  email     String   @unique @db.VarChar(150)
+  createdAt DateTime @default(now()) @map("created_at")
 
-  uploadedBy Int
-  user       User      @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
+  @@map("subscribers")
+}
+
+model Media {
+  id         BigInt   @id @default(autoincrement())
+  fileName   String   @map("file_name") @db.VarChar(255)
+  fileUrl    String   @map("file_url") @db.VarChar(255)
+  uploadedBy BigInt?  @map("uploaded_by")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  uploader User? @relation(fields: [uploadedBy], references: [id], onDelete: SetNull)
 
   @@index([uploadedBy])
   @@map("media")
-}
-
-model Subscriber {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  status    String    @default("active") // active, unsubscribed
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  @@map("subscribers")
 }
