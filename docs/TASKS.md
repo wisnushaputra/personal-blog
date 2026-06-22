@@ -100,36 +100,36 @@ Setup Project & Infra
 
 ### 4.3 Autentikasi
 
-- [ ] Setup NextAuth Credentials Provider _(ARCHITECTURE.md §9)_
-- [ ] Buat `middleware.ts` untuk proteksi `/dashboard/*`
-- [ ] Implementasi rate limiting login (maks. 5 gagal/15 menit) _(API.md §14)_
-- [ ] Halaman `/login`
+- [x] Setup NextAuth Credentials Provider _(ARCHITECTURE.md §9)_
+- [x] Buat `middleware.ts` untuk proteksi `/dashboard/*`
+- [x] Implementasi rate limiting login (maks. 5 gagal/15 menit) _(API.md §14)_
+- [x] Halaman `/login`
 
 ### 4.4 Backend/API
 
 _(detail lengkap request/response di `API.md`)_
 
-- [ ] `GET/POST /api/posts`, `GET /api/posts/[slug]`, `PUT/DELETE /api/posts/[id]` _(API.md §5)_
-- [ ] `GET/POST /api/categories`, `PUT/DELETE /api/categories/[id]` (+ konfirmasi force-delete) _(API.md §6)_
-- [ ] `GET/POST /api/tags`, `PUT/DELETE /api/tags/[id]` _(API.md §7)_
-- [ ] `POST/GET /api/comments`, `PATCH/DELETE /api/comments/[id]` _(API.md §8)_
-- [ ] `POST /api/subscribers`, unsubscribe endpoint _(API.md §9 — tunggu keputusan #8 & #10 di §2)_
-- [ ] `POST/GET/DELETE /api/media` _(API.md §10)_
-- [ ] `GET /api/search` _(API.md §11)_
-- [ ] `GET /api/stats` _(API.md §12)_
-- [ ] Panggil `revalidatePath()` di handler create/update/delete artikel _(ARCHITECTURE.md §8)_
+- [x] `GET/POST /api/posts`, `GET /api/posts/[slug]`, `PUT/DELETE /api/posts/[id]` _(API.md §5)_
+- [x] `GET/POST /api/categories`, `PUT/DELETE /api/categories/[id]` (+ konfirmasi force-delete) _(API.md §6)_
+- [x] `GET/POST /api/tags`, `PUT/DELETE /api/tags/[id]` _(API.md §7)_
+- [x] `POST/GET /api/comments`, `PATCH/DELETE /api/comments/[id]` _(API.md §8)_
+- [x] `POST /api/subscribers`, unsubscribe endpoint _(API.md §9 — tunggu keputusan #8 & #10 di §2)_
+- [x] `POST/GET/DELETE /api/media` _(API.md §10)_
+- [x] `GET /api/search` _(API.md §11)_
+- [x] `GET /api/stats` _(API.md §12)_
+- [x] Panggil `revalidatePath()` di handler create/update/delete artikel _(ARCHITECTURE.md §8)_
 
 ### 4.5 Frontend Publik
 
-- [ ] Layout dasar: Header, Footer, ThemeToggle _(STYLEGUIDE.md §4)_
-- [ ] Implementasi design tokens (CSS variables + `tailwind.config.js`) _(STYLEGUIDE.md §2)_
-- [ ] Homepage: hero, artikel terbaru, artikel populer, explore categories _(PRD §8.1)_
-- [ ] Halaman detail artikel: konten, share button, komentar, artikel terkait _(PRD §8.2)_
-- [ ] Halaman kategori & tag listing
-- [ ] Halaman search _(API.md §11)_
-- [ ] Halaman statis: arsip, tentang saya, kontak
-- [ ] Dark mode toggle + persist preferensi _(PRD §10)_
-- [ ] Komponen signature: "Catatan Wisnu" callout, inline highlight, tag chip _(STYLEGUIDE.md §4)_
+- [x] Layout dasar: Header, Footer, ThemeToggle _(STYLEGUIDE.md §4)_
+- [x] Implementasi design tokens (CSS variables + `tailwind.config.js`) _(STYLEGUIDE.md §2)_
+- [x] Homepage: hero, artikel terbaru, artikel populer, explore categories _(PRD §8.1)_
+- [x] Halaman detail artikel: konten, share button, komentar, artikel terkait _(PRD §8.2)_
+- [x] Halaman kategori & tag listing
+- [x] Halaman search _(API.md §11)_
+- [x] Halaman statis: arsip, tentang saya, kontak
+- [x] Dark mode toggle + persist preferensi _(PRD §10)_
+- [x] Komponen signature: "Catatan Wisnu" callout, inline highlight, tag chip _(STYLEGUIDE.md §4)_
 
 ### 4.6 Dashboard Admin
 

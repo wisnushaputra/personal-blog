@@ -2,28 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Light Mode */
 :root {
-  --color-primary: 228 68% 27%; /* Hijau tinta */
-  --color-secondary: 47 95% 45%; /* Kuning highlighter */
-  --color-accent: 0 0% 0%;
-  --color-background: 0 0% 100%;
-  --color-foreground: 0 0% 0%;
-  --color-muted: 0 0% 60%;
-
-  --font-serif: 'Fraunces', serif;
-  --font-sans: 'IBM Plex Sans', sans-serif;
+  --color-bg: #f7f7f2;
+  --color-surface: #ffffff;
+  --color-ink: #1c1b17;
+  --color-muted: #6b6a63;
+  --color-accent: #1f6f4a;
+  --color-highlight: #f5c84c;
+  --color-border: #e4e2da;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: 0 0% 10%;
-    --color-foreground: 0 0% 100%;
-    --color-muted: 0 0% 50%;
-  }
+/* Dark Mode */
+[data-theme='dark'] {
+  --color-bg: #15171a;
+  --color-surface: #1d2024;
+  --color-ink: #eceae3;
+  --color-muted: #8b8a82;
+  --color-accent: #4fbe89;
+  --color-highlight: #f5c84c;
+  --color-border: #2b2f34;
 }
 
 * {
   @apply transition-colors duration-200;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    @apply transition-none;
+  }
 }
 
 html {
@@ -31,5 +39,43 @@ html {
 }
 
 body {
-  @apply bg-background text-foreground;
+  @apply bg-bg font-sans text-ink;
+}
+
+/* Typography */
+h1,
+h2,
+h3 {
+  @apply font-display;
+}
+
+h1 {
+  @apply text-4xl font-semibold;
+}
+
+h2 {
+  @apply text-3xl font-semibold;
+}
+
+h3 {
+  @apply text-2xl font-semibold;
+}
+
+/* Mark/Highlight */
+mark {
+  background-color: color-mix(in srgb, var(--color-highlight) 35%, transparent);
+  color: var(--color-ink);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+/* Links */
+a {
+  @apply rounded text-accent underline hover:no-underline focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2;
+}
+
+/* Code */
+code,
+pre {
+  @apply font-mono;
 }

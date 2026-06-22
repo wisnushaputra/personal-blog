@@ -2,6 +2,7 @@ import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from './prisma';
 import bcrypt from 'bcrypt';
+import { checkRateLimit, recordAttempt, resetRateLimit, getRateLimitReset } from './rateLimit';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,19 +17,34 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Email dan password harus diisi');
         }
 
+        const email = credentials.email.toLowerCase().trim();
+
+        // Rate limiting: maks 5 percobaan gagal per 15 menit
+        if (!checkRateLimit('login', email)) {
+          const resetIn = getRateLimitReset('login', email);
+          throw new Error(
+            `Terlalu banyak percobaan login. Coba lagi dalam ${Math.ceil(resetIn / 60)} menit.`
+          );
+        }
+
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+          where: { email },
         });
 
         if (!user) {
-          throw new Error('User tidak ditemukan');
+          recordAttempt('login', email);
+          throw new Error('Email atau password salah');
         }
 
         const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
 
         if (!isPasswordValid) {
-          throw new Error('Password salah');
+          recordAttempt('login', email);
+          throw new Error('Email atau password salah');
         }
+
+        // Login berhasil — reset rate limit counter
+        resetRateLimit('login', email);
 
         return {
           id: user.id.toString(),
@@ -41,10 +57,10 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: 'jwt',
-    maxAge: 7 * 24 * 60 * 60, // 7 days
+    maxAge: 7 * 24 * 60 * 60, // 7 hari
   },
   jwt: {
-    maxAge: 7 * 24 * 60 * 60, // 7 days
+    maxAge: 7 * 24 * 60 * 60, // 7 hari
   },
   pages: {
     signIn: '/login',
