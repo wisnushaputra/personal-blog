@@ -68,13 +68,11 @@ Setup Project & Infra
    Dashboard Admin ◄────┘ (butuh API selesai)
         │
         ▼
-   SEO Dasar
-        │
-        ▼
-   Testing & QA
-        │
-        ▼
-   Deployment Production
+  - [/] Fix Vercel build error (thumbnail field missing in Prisma client)
+- [ ] Dashboard Admin: Layout, CRUD features
+- [ ] SEO Dasar
+- [ ] Testing & QA
+- [ ] Deployment Production
 ```
 
 ---
