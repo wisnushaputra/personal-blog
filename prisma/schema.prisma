@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String    // bcrypt hash
+  name      String
+  role      String    @default("admin") // admin, author
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  posts     Post[]
+  media     Media[]
+
+  @@map("users")
+}
+
+model Post {
+  id          Int       @id @default(autoincrement())
+  slug        String    @unique
+  title       String
+  content     String    @db.Text
+  excerpt     String?
+  status      String    @default("draft") // draft, published, scheduled
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  views       Int       @default(0)
+
+  authorId    Int
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  categoryId  Int
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: SetNull) // Will be nullable
+
+  tags        PostTag[]
+  comments    Comment[]
+
+  @@index([authorId])
+  @@index([categoryId])
+  @@index([publishedAt])
+  @@index([status])
+  @@map("posts")
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  slug      String    @unique
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  posts     Post[]
+
+  @@map("categories")
+}
+
+model Tag {
+  id        Int       @id @default(autoincrement())
+  slug      String    @unique
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  posts     PostTag[]
+
+  @@map("tags")
+}
+
+model PostTag {
+  id     Int @id @default(autoincrement())
+  postId Int
+  tagId  Int
+
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, tagId])
+  @@map("post_tags")
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String
+  content   String    @db.Text
+  status    String    @default("pending") // pending, approved, rejected
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  postId    Int
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parentId  Int?
+  parent    Comment?  @relation("CommentReply", fields: [parentId], references: [id], onDelete: SetNull)
+  replies   Comment[] @relation("CommentReply")
+
+  @@index([postId])
+  @@index([status])
+  @@map("comments")
+}
+
+model Media {
+  id        Int       @id @default(autoincrement())
+  name      String
+  url       String
+  type      String    // image, video, document
+  size      Int       // in bytes
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  uploadedBy Int
+  user       User      @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
+
+  @@index([uploadedBy])
+  @@map("media")
+}
+
+model Subscriber {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  status    String    @default("active") // active, unsubscribed
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("subscribers")
+}

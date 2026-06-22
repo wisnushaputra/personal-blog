@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: 228 68% 27%; /* Hijau tinta */
+  --color-secondary: 47 95% 45%; /* Kuning highlighter */
+  --color-accent: 0 0% 0%;
+  --color-background: 0 0% 100%;
+  --color-foreground: 0 0% 0%;
+  --color-muted: 0 0% 60%;
+
+  --font-serif: 'Fraunces', serif;
+  --font-sans: 'IBM Plex Sans', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: 0 0% 10%;
+    --color-foreground: 0 0% 100%;
+    --color-muted: 0 0% 50%;
+  }
+}
+
+* {
+  @apply transition-colors duration-200;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-background text-foreground;
+}
