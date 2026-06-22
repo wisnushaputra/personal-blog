@@ -88,7 +88,7 @@ Setup Project & Infra
 - [x] Setup Husky + lint-staged pre-commit hook _(STYLEGUIDE.md §8)_
 - [x] Provisioning PostgreSQL (Railway/Supabase) _(ARCHITECTURE.md §15)_
 - [x] Setup `.env.local` & `.env.example` (`DATABASE_URL`, `NEXTAUTH_SECRET`, storage API key)
-- [ ] Connect repo GitHub ke Vercel, aktifkan preview deployment per PR _(ARCHITECTURE.md §15)_
+- [x] Connect repo GitHub ke Vercel, aktifkan preview deployment per PR _(ARCHITECTURE.md §15)_
 - [ ] Setup object storage untuk media (Vercel Blob/Cloudinary) _(ARCHITECTURE.md §12)_
 
 ### 4.2 Database
