@@ -96,7 +96,7 @@ Setup Project & Infra
 - [x] Tulis `prisma/schema.prisma` sesuai skema final _(DATABASE.md §5)_
 - [x] Jalankan `prisma migrate dev --name init`
 - [x] Buat `prisma/seed.ts`: 1 admin user, 5–7 kategori dasar, beberapa tag, 1–2 artikel contoh _(DATABASE.md §6)_
-- [ ] Tentukan pendekatan search MVP (`ILIKE` sederhana, upgrade nanti) _(DATABASE.md §9)_
+- [x] Tentukan pendekatan search MVP (`ILIKE` sederhana, upgrade nanti) _(DATABASE.md §9)_
 
 ### 4.3 Autentikasi
 
