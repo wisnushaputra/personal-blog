@@ -60,7 +60,7 @@ npx prisma migrate dev
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the blog.
+Open [http://localhost:3000](http://localhost:3000)
 
 ---
 
